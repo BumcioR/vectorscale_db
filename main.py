@@ -68,23 +68,27 @@ def insert_image(engine, image_path: str, image_embedding: List[float]):
 def insert_games(engine, dataset):
     with Session(engine) as session:
         for game in tqdm(dataset, total=len(dataset)):
-            name = game["Name"]
-            description = game["About the game"] or ""
-            windows, linux, mac = game["Windows"], game["Linux"], game["Mac"]
-            price = game["Price"]
+            try:
+                name = game["Name"]
+                description = game["About the game"] or ""
+                windows, linux, mac = game["Windows"], game["Linux"], game["Mac"]
+                price = game["Price"]
 
-            if name and description and price is not None:
-                embedding = generate_embeddings(description)
-                game_obj = Games(
-                    name=name,
-                    description=description[:4096],
-                    windows=windows,
-                    linux=linux,
-                    mac=mac,
-                    price=price,
-                    game_description_embedding=embedding
-                )
-                session.add(game_obj)
+                if name and description and price is not None:
+                    embedding = generate_embeddings(description)
+                    game_obj = Games(
+                        name=name,
+                        description=description[:4096],
+                        windows=windows,
+                        linux=linux,
+                        mac=mac,
+                        price=price,
+                        game_description_embedding=embedding
+                    )
+                    session.add(game_obj)
+            except Exception as e:
+                print(f"Błąd przy przetwarzaniu gry: {game.get('Name', 'UNKNOWN')} - {e}")
+
         session.commit()
 
 # 7. Zapytania
