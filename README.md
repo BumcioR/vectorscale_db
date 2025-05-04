@@ -1,44 +1,86 @@
-# Lab 2 - Vector databases
+# Vector databases
 
-This lab concerns using vector search and vector databases. Those are frequently
-used tools for searching, recommendation, and retrieval-augmented generation (RAG).
-We will go over various approaches to creating vector search indexes and working
-with them.
+# Similarity Search with TimescaleDB and pg_vectorscale
 
-**Learning plan**
-1. Vector search index
-   - vector search as relational database index
-   - Postgres, TimescaleDB, pgvectorscale
-   - SQLAlchemy
-   - text embeddings
-   - vector search queries
-2. Vector databases and RAG
-   - Milvus
-   - text chunking
-   - external API integration
-   - RAG
+This project demonstrates how to build a similarity search system using TimescaleDB with the `pg_vectorscale` extension. It includes setting up a PostgreSQL database with vector support, creating vector indexes, embedding game descriptions, and performing vector similarity queries using SQLAlchemy and Python.
 
-**Necessary software**
-- [Docker and Docker Compose](https://docs.docker.com/engine/install/), 
-  also [see those post-installation notes](https://docs.docker.com/engine/install/linux-postinstall/)
-- Postgres client, e.g. `sudo apt install postgresql-client`
-  ([more details](https://askubuntu.com/questions/1040765/how-to-install-psql-without-postgres))
-- [uv](https://docs.astral.sh/uv/getting-started/installation/)
+## Features
+
+- Vector indexing with `pg_vectorscale`
+- Embedding generation with Sentence Transformers
+- SQLAlchemy ORM integration
+- Vector similarity search (cosine distance)
+- Dockerized PostgreSQL + TimescaleDB setup
+
+## Requirements
+
+- Docker + Docker Compose
 - Python 3.11
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) package manager
 
-Note that you should also activate `uv` project and install dependencies with `uv sync`.
+## Installation
 
-**Lab**
+Clone the repository and navigate to the project directory:
 
-See [lab instruction](LAB_INSTRUCTION.md).
+```bash
+git clone <repo_url>
+cd vectorscale_db
+```
 
-**Homework**
+Install Python dependencies using `uv`:
 
-See [homework instruction](HOMEWORK.md).
+```bash
+uv venv
+source .venv/bin/activate
+uv sync
+```
 
-**Data**
+This will create and activate a virtual environment and install all dependencies defined in `pyproject.toml`.
 
-We will be using [Steam Games Dataset](https://huggingface.co/datasets/FronkonGames/steam-games-dataset)
-about games published on Steam, as well as
-[Amazon Berkeley Objects (ABO) Dataset](https://amazon-berkeley-objects.s3.amazonaws.com/index.html)
-with data about objects available in the Amazon store.
+## Running the Database
+
+Start the PostgreSQL container with TimescaleDB and pg_vectorscale:
+
+```bash
+docker compose up -d
+```
+
+It will run a container with TimescaleDB and automatically install the necessary extensions.
+
+## Interacting with the Database
+
+You can connect to the running database using a PostgreSQL client like `psql`:
+
+```bash
+psql -h localhost -p 5432 -U postgres -d similarity_search_service_db
+```
+
+Credentials:
+
+    User: postgres
+
+    Password: password
+
+    Database: similarity_search_service_db
+
+## Using the System
+
+The system loads Steam games dataset, generates embeddings using `sentence-transformers` (`distiluse-base-multilingual-cased-v2`), inserts them into the database, and performs cosine similarity search based on textual queries.
+
+Run the main script:
+
+```bash
+python main.py
+```
+
+## Dataset
+
+The Steam Games dataset is loaded from HuggingFace:
+
+- [https://huggingface.co/datasets/FronkonGames/steam-games-dataset](https://huggingface.co/datasets/FronkonGames/steam-games-dataset)
+
+Only selected fields are used.
+
+## License
+
+MIT License
