@@ -174,3 +174,21 @@ if __name__ == "__main__":
         print(f"Opis: {game.description}")
     else:
         print("Nie znaleziono gry.")
+
+    # Dodatkowe testy — różne kryteria
+    print("\nDodatkowe testy wyszukiwania:")
+    test_queries = [
+        {"desc": "This is a game about a hero who saves the world", "kwargs": {"price": 10}},
+        {"desc": "Home decorating", "kwargs": {"price": 20}},
+        {"desc": "Home decorating", "kwargs": {"mac": True, "price": 5}},
+    ]
+
+    for test in test_queries:
+        print(f"\nZapytanie: '{test['desc']}' z parametrami {test['kwargs']}")
+        game = find_game(engine, game_description=test["desc"], **test["kwargs"])
+        if game:
+            print(f"Znaleziono grę: {game.name}")
+            print(f"Opis: {game.description}")
+        else:
+            print("Nie znaleziono gry.")
+
